@@ -10,21 +10,20 @@ import Container from 'components/Container';
 import styles from './Footer.module.scss';
 
 const Footer = () => {
-  const { metadata = {}, recentPosts = [], categories = [] } = useSite();
+  const { metadata = {}, recentPosts = [] } = useSite();
   const { title } = metadata;
 
   const latestFivePosts = Array.isArray(recentPosts) ? recentPosts.slice(0, 5) : [];
   const hasRecentPosts = latestFivePosts.length > 0;
-  const hasCategories = Array.isArray(categories) && categories.length > 0;
 
-  const handleCategoryChange = (e) => {
-    const selectedSlug = e.target.value;
-    if (selectedSlug) {
-      // Safe hard navigation to avoid React hydration/routing exceptions on category pages
-      const targetUrl = categoryPathBySlug(selectedSlug);
-      window.location.href = targetUrl;
-    }
-  };
+  // Hardcoded 5 categories list
+  const fixedCategories = [
+    { name: 'AI', slug: 'ai' },
+    { name: 'Celebs', slug: 'celebs' },
+    { name: 'Marvel', slug: 'marvel' },
+    { name: 'DC', slug: 'dc' },
+    { name: 'Gadgets', slug: 'gadgets' },
+  ];
 
   return (
     <footer className={styles.footer}>
@@ -60,33 +59,20 @@ const Footer = () => {
               )}
             </li>
 
-            {/* Column 3: Categories Dropdown */}
+            {/* Column 3: Categories (Fixed 5 Line-by-Line Links) */}
             <li>
               <Link href="/categories/" className={styles.footerMenuTitle}>
                 <strong>Categories</strong>
               </Link>
-              {hasCategories && (
-                <div className={styles.categoryDropdownWrapper}>
-                  <select
-                    className={styles.categorySelect}
-                    onChange={handleCategoryChange}
-                    defaultValue=""
-                    aria-label="Select Category"
-                  >
-                    <option value="" disabled>
-                      Select Category
-                    </option>
-                    {categories.map((category) => {
-                      const { id, slug, name } = category;
-                      return (
-                        <option key={id || slug} value={slug}>
-                          {name}
-                        </option>
-                      );
-                    })}
-                  </select>
-                </div>
-              )}
+              <ul className={styles.footerMenuItems}>
+                {fixedCategories.map((category) => (
+                  <li key={category.slug}>
+                    <Link href={categoryPathBySlug(category.slug)}>
+                      {category.name}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
             </li>
 
             {/* Column 4: More */}
