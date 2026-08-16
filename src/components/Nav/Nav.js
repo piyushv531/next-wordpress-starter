@@ -21,7 +21,9 @@ const Nav = () => {
   const { metadata = {} } = useSite();
   const { title } = metadata;
 
+  // Added Home at the very beginning of the navigation menu
   const mainCategories = [
+    { label: 'Home', slug: '' },
     { label: 'Movies', slug: 'movies' },
     { label: 'TV', slug: 'tv' },
     { label: 'Reviews', slug: 'reviews' },
@@ -127,7 +129,7 @@ const Nav = () => {
     return () => {
       document.removeEventListener('keydown', escFunction, false);
     };
-    // eslint-disable-content react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -138,8 +140,8 @@ const Nav = () => {
         </p>
         <ul className={styles.navMenu}>
           {mainCategories.map((cat) => (
-            <li key={cat.slug}>
-              <Link href={`/categories/${cat.slug}`}>
+            <li key={cat.label}>
+              <Link href={cat.slug === '' ? '/' : `/categories/${cat.slug}`}>
                 {cat.label}
               </Link>
             </li>
