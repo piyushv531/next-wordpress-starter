@@ -3,10 +3,11 @@
 .footer {
   width: 100%;
   border-top: 1px solid $color-gray-100;
+  background-color: #ffffff;
 }
 
 .footerMenu {
-  margin: 2rem 0;
+  margin: 2.5rem 0;
 
   ul {
     list-style: none;
@@ -15,32 +16,57 @@
 }
 
 .footerMenuColumns {
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  margin: 0 -2em;
+  display: grid;
+  grid-template-columns: 1.4fr 1.2fr 1fr 0.8fr;
+  gap: 2rem;
+  margin: 0;
+  padding: 0;
 
-  @media (min-width: 480px) {
-    justify-content: center;
+  @media (max-width: 900px) {
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+  }
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
   }
 
   & > li {
-    max-width: 15em;
-    margin: 2em;
+    max-width: 100%;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
   }
 }
 
 .footerMenuTitle {
-  display: inline-block;
+  display: block;
   color: $color-gray-800;
   text-decoration: none;
-  margin-bottom: 1.4em;
+  margin-bottom: 1rem;
   margin-top: 0;
+  font-size: 1.05rem;
+
+  strong {
+    font-weight: 700;
+  }
+}
+
+.footerAbout {
+  font-size: 0.88rem;
+  line-height: 1.6;
+  color: $color-gray-600;
+  margin: 0;
 }
 
 .footerMenuItems {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
   li {
-    margin-bottom: 1em;
+    margin-bottom: 0.6rem;
 
     &:last-child {
       margin-bottom: 0;
@@ -54,6 +80,7 @@
     text-decoration: none;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: 0.88rem;
 
     @media (hover: hover) {
       &:hover {
@@ -64,14 +91,38 @@
   }
 }
 
+/* Category Dropdown Styling */
+.categoryDropdownWrapper {
+  width: 100%;
+  margin-top: 0.2rem;
+}
+
+.categorySelect {
+  width: 100%;
+  padding: 0.5rem 0.65rem;
+  font-size: 0.88rem;
+  color: $color-gray-800;
+  background-color: #f9fafb;
+  border: 1px solid $color-gray-200;
+  border-radius: 6px;
+  outline: none;
+  cursor: pointer;
+  box-sizing: border-box;
+
+  &:focus {
+    border-color: $color-primary;
+    background-color: #ffffff;
+  }
+}
+
 .footerLegal {
   color: $color-gray-400;
   background-color: $color-gray-900;
-  padding: 0.8rem 0;
+  padding: 1.25rem 0;
   margin: 0;
 
   p {
-    font-size: 0.9em;
+    font-size: 0.85rem;
     text-align: center;
     margin: 0;
   }
