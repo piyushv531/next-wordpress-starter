@@ -5,6 +5,69 @@
   justify-content: center;
 }
 
+/* Sidebar Layout Settings */
+.postLayout {
+  display: flex;
+  gap: 2.5rem;
+  align-items: flex-start;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+  }
+}
+
+.mainArticle {
+  flex: 1;
+  min-width: 0;
+}
+
+.sidebar {
+  width: 320px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 2rem;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    margin-top: 2rem;
+  }
+}
+
+.widget {
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
+}
+
+.widgetTitle {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #000;
+}
+
+.widgetList {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+
+  li {
+    margin-bottom: 0.75rem;
+
+    a {
+      text-decoration: none;
+      color: #0066cc;
+      font-weight: 500;
+
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+}
+
 .postFooter {
   text-align: center;
 }
@@ -18,10 +81,12 @@
 .relatedPosts {
   display: flex;
   flex-direction: column;
+
   span {
     font-size: 1.2em;
     margin-bottom: 0.4em;
   }
+
   ul {
     list-style: none;
   }
