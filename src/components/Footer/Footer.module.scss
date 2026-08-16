@@ -16,77 +16,90 @@
 }
 
 .footerMenuColumns {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  margin: 0;
-  padding: 0;
+  display: flex !important;
+  flex-wrap: nowrap !important;
+  justify-content: space-between !important;
+  width: 100% !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  gap: 1.5rem !important;
 
   @media (max-width: 900px) {
-    grid-template-columns: 1fr 1fr;
-    gap: 2rem;
-  }
-
-  @media (max-width: 600px) {
-    grid-template-columns: 1fr;
-    gap: 1.5rem;
+    flex-wrap: wrap !important;
   }
 
   & > li {
-    width: 100%;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
+    flex: 1 1 25% !important;
+    width: 25% !important;
+    max-width: 25% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    box-sizing: border-box !important;
+
+    @media (max-width: 900px) {
+      flex: 1 1 45% !important;
+      width: 45% !important;
+      max-width: 45% !important;
+      margin-bottom: 1.5rem !important;
+    }
+
+    @media (max-width: 600px) {
+      flex: 1 1 100% !important;
+      width: 100% !important;
+      max-width: 100% !important;
+    }
   }
 }
 
 .footerMenuTitle {
-  display: block;
-  color: $color-gray-800;
-  text-decoration: none;
-  margin-bottom: 1rem;
-  margin-top: 0;
-  font-size: 1.05rem;
+  display: block !important;
+  color: $color-gray-800 !important;
+  text-decoration: none !important;
+  margin-bottom: 1rem !important;
+  margin-top: 0 !important;
+  font-size: 1.05rem !important;
 
   strong {
-    font-weight: 700;
+    font-weight: 700 !important;
   }
 }
 
 .footerAbout {
-  font-size: 0.88rem;
-  line-height: 1.6;
-  color: $color-gray-600;
-  margin: 0;
+  font-size: 0.88rem !important;
+  line-height: 1.6 !important;
+  color: $color-gray-600 !important;
+  margin: 0 !important;
+  word-break: break-word !important;
 }
 
 .footerMenuItems {
-  list-style: none;
-  padding: 0;
-  margin: 0;
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
 
   li {
-    margin-bottom: 0.6rem;
+    margin-bottom: 0.6rem !important;
 
     &:last-child {
-      margin-bottom: 0;
+      margin-bottom: 0 !important;
     }
   }
 
   a {
-    display: block;
-    overflow: hidden;
-    color: $color-gray-600;
-    text-decoration: none;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 0.88rem;
+    display: block !important;
+    overflow: hidden !important;
+    color: $color-gray-600 !important;
+    text-decoration: none !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    font-size: 0.88rem !important;
 
     @media (hover: hover) {
       &:hover {
-        color: $color-primary;
-        text-decoration: underline;
+        color: $color-primary !important;
+        text-decoration: underline !important;
       }
     }
   }
@@ -94,37 +107,37 @@
 
 /* Category Dropdown Styling */
 .categoryDropdownWrapper {
-  width: 100%;
-  margin-top: 0.2rem;
+  width: 100% !important;
+  margin-top: 0.2rem !important;
 }
 
 .categorySelect {
-  width: 100%;
-  padding: 0.5rem 0.65rem;
-  font-size: 0.88rem;
-  color: $color-gray-800;
-  background-color: #f9fafb;
-  border: 1px solid $color-gray-200;
-  border-radius: 6px;
-  outline: none;
-  cursor: pointer;
-  box-sizing: border-box;
+  width: 100% !important;
+  padding: 0.5rem 0.65rem !important;
+  font-size: 0.88rem !important;
+  color: $color-gray-800 !important;
+  background-color: #f9fafb !important;
+  border: 1px solid $color-gray-200 !important;
+  border-radius: 6px !important;
+  outline: none !important;
+  cursor: pointer !important;
+  box-sizing: border-box !important;
 
   &:focus {
-    border-color: $color-primary;
-    background-color: #ffffff;
+    border-color: $color-primary !important;
+    background-color: #ffffff !important;
   }
 }
 
 .footerLegal {
-  color: $color-gray-400;
-  background-color: $color-gray-900;
-  padding: 1.25rem 0;
-  margin: 0;
+  color: $color-gray-400 !important;
+  background-color: $color-gray-900 !important;
+  padding: 1.25rem 0 !important;
+  margin: 0 !important;
 
   p {
-    font-size: 0.85rem;
-    text-align: center;
-    margin: 0;
+    font-size: 0.85rem !important;
+    text-align: center !important;
+    margin: 0 !important;
   }
 }
