@@ -28,27 +28,28 @@ export default function Post({ post, socialImage, related }) {
     date,
     author,
     categories,
-    modified,
     featuredImage,
     isSticky = false,
-  } = post;
+  } = post || {};
 
   const { metadata: siteMetadata = {}, homepage } = useSite();
 
-  if (!post.og) {
+  if (post && !post.og) {
     post.og = {};
   }
 
-  post.og.imageUrl = `${homepage}${socialImage}`;
-  post.og.imageSecureUrl = post.og.imageUrl;
-  post.og.imageWidth = 2000;
-  post.og.imageHeight = 1000;
+  if (post?.og) {
+    post.og.imageUrl = `${homepage}${socialImage}`;
+    post.og.imageSecureUrl = post.og.imageUrl;
+    post.og.imageWidth = 2000;
+    post.og.imageHeight = 1000;
+  }
 
   const { metadata } = usePageMetadata({
     metadata: {
       ...post,
       title: metaTitle,
-      description: description || post.og?.description || `Read more about ${title}`,
+      description: description || post?.og?.description || `Read more about ${title}`,
     },
   });
 
@@ -65,6 +66,10 @@ export default function Post({ post, socialImage, related }) {
   const { posts: relatedPostsList, title: relatedPostsTitle } = related || {};
 
   const helmetSettings = helmetSettingsFromMetadata(metadata);
+
+  if (!post) {
+    return null;
+  }
 
   return (
     <Layout>
@@ -96,9 +101,10 @@ export default function Post({ post, socialImage, related }) {
       </Header>
 
       <Content>
-        <Section>
+        <Section className={styles.postSection}>
           <Container>
             <div className={styles.postLayout}>
+              {/* Main Article Content */}
               <article className={styles.mainArticle}>
                 <div
                   className={styles.content}
@@ -108,7 +114,26 @@ export default function Post({ post, socialImage, related }) {
                 />
               </article>
 
+              {/* Sidebar with Search Bar & Related Posts */}
               <aside className={styles.sidebar}>
+                {/* Search Widget */}
+                <div className={styles.widget}>
+                  <h3 className={styles.widgetTitle}>Search</h3>
+                  <form action="/search" method="get" className={styles.searchForm}>
+                    <input
+                      type="search"
+                      name="q"
+                      placeholder="Search posts..."
+                      className={styles.searchInput}
+                      required
+                    />
+                    <button type="submit" className={styles.searchButton}>
+                      Search
+                    </button>
+                  </form>
+                </div>
+
+                {/* Related Posts Widget */}
                 <div className={styles.widget}>
                   <h3 className={styles.widgetTitle}>
                     {relatedPostsTitle?.name ? `More from ${relatedPostsTitle.name}` : 'Related Posts'}
@@ -130,12 +155,6 @@ export default function Post({ post, socialImage, related }) {
           </Container>
         </Section>
       </Content>
-
-      <Section className={styles.postFooter}>
-        <Container>
-          <p className={styles.postModified}>Last updated on {formatDate(modified)}.</p>
-        </Container>
-      </Section>
     </Layout>
   );
 }
