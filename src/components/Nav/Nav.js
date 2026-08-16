@@ -21,14 +21,14 @@ const Nav = () => {
   const { metadata = {} } = useSite();
   const { title } = metadata;
 
-  // Hardcoded 6 navigation categories line-by-line
+  // Hardcoded direct URLs to bypass Next.js dynamic GraphQL routing errors
   const mainCategories = [
-    { label: 'Movies', slug: 'movies' },
-    { label: 'TV', slug: 'tv' },
-    { label: 'Reviews', slug: 'reviews' },
-    { label: 'Box Office', slug: 'box-office' },
-    { label: 'Gaming', slug: 'gaming' },
-    { label: 'Tech', slug: 'tech' },
+    { label: 'Movies', url: 'https://e-surge.wasmer.app/category/movies/' },
+    { label: 'TV', url: 'https://e-surge.wasmer.app/category/tv/' },
+    { label: 'Reviews', url: 'https://e-surge.wasmer.app/category/reviews/' },
+    { label: 'Box Office', url: 'https://e-surge.wasmer.app/category/box-office/' },
+    { label: 'Gaming', url: 'https://e-surge.wasmer.app/category/gaming/' },
+    { label: 'Tech', url: 'https://e-surge.wasmer.app/category/tech/' },
   ];
 
   const { query, results, search, clearSearch, state } = useSearch({
@@ -37,14 +37,7 @@ const Nav = () => {
 
   const searchIsLoaded = state === SEARCH_STATE_LOADED;
 
-  // When the search visibility changes, we want to add an event listener that allows us to
-  // detect when someone clicks outside of the search box, allowing us to close the results
-  // when focus is drawn away from search
-
   useEffect(() => {
-    // If we don't have a query, don't need to bother adding an event listener
-    // but run the cleanup in case the previous state instance exists
-
     if (searchVisibility === SEARCH_HIDDEN) {
       removeDocumentOnClick();
       return;
@@ -52,9 +45,6 @@ const Nav = () => {
 
     addDocumentOnClick();
     addResultsRoving();
-
-    // When the search box opens up, additionall find the search input and focus
-    // on the element so someone can start typing right away
 
     const searchInput = Array.from(formRef.current.elements).find((input) => input.type === 'search');
 
@@ -67,25 +57,13 @@ const Nav = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchVisibility]);
 
-  /**
-   * addDocumentOnClick
-   */
-
   function addDocumentOnClick() {
     document.body.addEventListener('click', handleOnDocumentClick, true);
   }
 
-  /**
-   * removeDocumentOnClick
-   */
-
   function removeDocumentOnClick() {
     document.body.removeEventListener('click', handleOnDocumentClick, true);
   }
-
-  /**
-   * handleOnDocumentClick
-   */
 
   function handleOnDocumentClick(e) {
     if (!e.composedPath().includes(formRef.current)) {
@@ -94,43 +72,23 @@ const Nav = () => {
     }
   }
 
-  /**
-   * handleOnSearch
-   */
-
   function handleOnSearch({ currentTarget }) {
     search({
       query: currentTarget.value,
     });
   }
 
-  /**
-   * handleOnToggleSearch
-   */
-
   function handleOnToggleSearch() {
     setSearchVisibility(SEARCH_VISIBLE);
   }
-
-  /**
-   * addResultsRoving
-   */
 
   function addResultsRoving() {
     document.body.addEventListener('keydown', handleResultsRoving);
   }
 
-  /**
-   * removeResultsRoving
-   */
-
   function removeResultsRoving() {
     document.body.removeEventListener('keydown', handleResultsRoving);
   }
-
-  /**
-   * handleResultsRoving
-   */
 
   function handleResultsRoving(e) {
     const focusElement = document.activeElement;
@@ -155,12 +113,6 @@ const Nav = () => {
       }
     }
   }
-
-  /**
-   * escFunction
-   */
-
-  // pressing esc while search is focused will close it
 
   const escFunction = useCallback((event) => {
     if (event.keyCode === 27) {
@@ -187,10 +139,10 @@ const Nav = () => {
         </p>
         <ul className={styles.navMenu}>
           {mainCategories.map((cat) => (
-            <li key={cat.slug}>
-              <Link href={`/categories/${cat.slug}`}>
+            <li key={cat.label}>
+              <a href={cat.url}>
                 {cat.label}
-              </Link>
+              </a>
             </li>
           ))}
         </ul>
