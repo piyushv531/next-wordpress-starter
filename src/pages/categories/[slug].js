@@ -6,9 +6,17 @@ import TemplateArchive from 'templates/archive';
 import Title from 'components/Title';
 
 export default function Category({ category, posts = [] }) {
-  // Safety check agar category undefined/null mile
+  // Agar category na mile toh white screen ki jagah yeh message dikhega
   if (!category) {
-    return null;
+    return (
+      <div style={{ padding: '5rem 1rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Category Not Found</h1>
+        <p style={{ color: '#666' }}>WordPress se is category ka data fetch nahi ho pa raha hai. Kripya check karein ki slug sahi hai ya nahi.</p>
+        <p style={{ marginTop: '2rem' }}>
+          <a href="/" style={{ color: '#0070f3', textDecoration: 'underline' }}>Go back home</a>
+        </p>
+      </div>
+    );
   }
 
   const { name = '', description = '', slug = '' } = category;
@@ -52,7 +60,7 @@ export async function getStaticProps({ params = {} } = {}) {
       category,
       posts: Array.isArray(posts) ? posts : [],
     },
-    revalidate: 60, // Server response fail-safe optimization
+    revalidate: 60,
   };
 }
 
