@@ -99,12 +99,42 @@ export default function Post({ post, socialImage, related }) {
       <Content>
         <Section>
           <Container>
-            <div
-              className={styles.content}
-              dangerouslySetInnerHTML={{
-                __html: content,
-              }}
-            />
+            {/* Sidebar aur Content Wrapper */}
+            <div className={styles.postLayout}>
+              
+              {/* Main Article Content */}
+              <article className={styles.mainArticle}>
+                <div
+                  className={styles.content}
+                  dangerouslySetInnerHTML={{
+                    __html: content,
+                  }}
+                />
+              </article>
+
+              {/* Sidebar Area */}
+              <aside className={styles.sidebar}>
+                <div className={styles.widget}>
+                  <h3 className={styles.widgetTitle}>
+                    {relatedPostsTitle?.name ? `More from ${relatedPostsTitle.name}` : 'Related Posts'}
+                  </h3>
+                  {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 ? (
+                    <ul className={styles.widgetList}>
+                      {relatedPostsList.map((relatedPost) => (
+                        <li key={relatedPost.title}>
+                          <Link href={postPathBySlug(relatedPost.slug)}>
+                            {relatedPost.title}
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : (
+                    <p>No related posts available.</p>
+                  )}
+                </div>
+              </aside>
+
+            </div>
           </Container>
         </Section>
       </Content>
@@ -112,24 +142,6 @@ export default function Post({ post, socialImage, related }) {
       <Section className={styles.postFooter}>
         <Container>
           <p className={styles.postModified}>Last updated on {formatDate(modified)}.</p>
-          {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 && (
-            <div className={styles.relatedPosts}>
-              {relatedPostsTitle.name ? (
-                <span>
-                  More from <Link href={relatedPostsTitle.link}>{relatedPostsTitle.name}</Link>
-                </span>
-              ) : (
-                <span>More Posts</span>
-              )}
-              <ul>
-                {relatedPostsList.map((post) => (
-                  <li key={post.title}>
-                    <Link href={postPathBySlug(post.slug)}>{post.title}</Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          )}
         </Container>
       </Section>
     </Layout>
@@ -172,14 +184,8 @@ export async function getStaticProps({ params = {} } = {}) {
 }
 
 export async function getStaticPaths() {
-  // Only render the most recent posts to avoid spending unecessary time
-  // querying every single post from WordPress
-
-  // Tip: this can be customized to use data or analytitcs to determine the
-  // most popular posts and render those instead
-
   const { posts } = await getRecentPosts({
-    count: process.env.POSTS_PRERENDER_COUNT, // Update this value in next.config.js!
+    count: process.env.POSTS_PRERENDER_COUNT,
     queryIncludes: 'index',
   });
 
