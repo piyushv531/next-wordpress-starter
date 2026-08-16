@@ -15,12 +15,29 @@ const Footer = () => {
   const latestFivePosts = Array.isArray(recentPosts) ? recentPosts.slice(0, 5) : [];
   const hasRecentPosts = latestFivePosts.length > 0;
 
+  // Categories list for the dropdown in the 4th column
+  const categories = [
+    { label: 'Movies', slug: 'movies' },
+    { label: 'TV', slug: 'tv' },
+    { label: 'Reviews', slug: 'reviews' },
+    { label: 'Box Office', slug: 'box-office' },
+    { label: 'Gaming', slug: 'gaming' },
+    { label: 'Tech', slug: 'tech' },
+  ];
+
+  const handleCategoryChange = (e) => {
+    const slug = e.target.value;
+    if (slug) {
+      window.location.href = `/categories/${slug}`;
+    }
+  };
+
   return (
     <footer className={styles.footer}>
       <Section className={styles.footerMenu}>
         <Container>
-          {/* Ab yahan sirf 3 columns rahenge, CSS grid/flex inka size barabar kar dega */}
-          <ul className={styles.footerMenuColumns} style={{ gridTemplateColumns: 'repeat(3, 1fr)' }}>
+          {/* 4 columns layout with equal width using repeat(4, 1fr) */}
+          <ul className={styles.footerMenuColumns} style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
             
             {/* Column 1: Site Info */}
             <li>
@@ -51,7 +68,7 @@ const Footer = () => {
               )}
             </li>
 
-            {/* Column 3: More (Purana 4th column ab 3rd ban gaya hai) */}
+            {/* Column 3: More (RSS & Sitemap) */}
             <li>
               <p className={styles.footerMenuTitle}>
                 <strong>More</strong>
@@ -64,6 +81,36 @@ const Footer = () => {
                   <a href="/sitemap.xml">Sitemap</a>
                 </li>
               </ul>
+            </li>
+
+            {/* Column 4: Categories Dropdown */}
+            <li>
+              <p className={styles.footerMenuTitle}>
+                <strong>Categories</strong>
+              </p>
+              <div style={{ marginTop: '1rem' }}>
+                <select 
+                  onChange={handleCategoryChange} 
+                  defaultValue=""
+                  style={{
+                    width: '100%',
+                    padding: '8px 12px',
+                    borderRadius: '4px',
+                    border: '1px solid #ccc',
+                    backgroundColor: '#fff',
+                    color: '#333',
+                    fontSize: '14px',
+                    cursor: 'pointer'
+                  }}
+                >
+                  <option value="" disabled>Select Category</option>
+                  {categories.map((cat) => (
+                    <option key={cat.slug} value={cat.slug}>
+                      {cat.label}
+                    </option>
+                  ))}
+                </select>
+              </div>
             </li>
 
           </ul>
