@@ -24,20 +24,23 @@
   padding: 0 !important;
   gap: 2rem !important;
 
+  /* Tablet view: 2 columns per row */
   @media (max-width: 900px) {
     flex-wrap: wrap !important;
   }
 
   & > li {
-    flex: 1 1 33.333% !important;
-    width: 33.333% !important;
-    max-width: 33.333% !important;
+    /* Changed from 33.333% to 25% for 4 equal columns on desktop */
+    flex: 1 1 25% !important;
+    width: 25% !important;
+    max-width: 25% !important;
     margin: 0 !important;
     padding: 0 !important;
     display: flex !important;
     flex-direction: column !important;
     box-sizing: border-box !important;
 
+    /* Tablet view: 2 columns */
     @media (max-width: 900px) {
       flex: 1 1 48% !important;
       width: 48% !important;
@@ -45,6 +48,7 @@
       margin-bottom: 1.5rem !important;
     }
 
+    /* Mobile view: 1 column */
     @media (max-width: 600px) {
       flex: 1 1 100% !important;
       width: 100% !important;
