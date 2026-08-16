@@ -5,12 +5,10 @@ import { FaSearch } from 'react-icons/fa';
 import useSite from 'hooks/use-site';
 import useSearch, { SEARCH_STATE_LOADED } from 'hooks/use-search';
 import { postPathBySlug } from 'lib/posts';
-import { findMenuByLocation, MENU_LOCATION_NAVIGATION_DEFAULT } from 'lib/menus';
 
 import Section from 'components/Section';
 
 import styles from './Nav.module.scss';
-import NavListItem from 'components/NavListItem';
 
 const SEARCH_VISIBLE = 'visible';
 const SEARCH_HIDDEN = 'hidden';
@@ -20,11 +18,18 @@ const Nav = () => {
 
   const [searchVisibility, setSearchVisibility] = useState(SEARCH_HIDDEN);
 
-  const { metadata = {}, menus } = useSite();
+  const { metadata = {} } = useSite();
   const { title } = metadata;
 
-  const navigationLocation = process.env.WORDPRESS_MENU_LOCATION_NAVIGATION || MENU_LOCATION_NAVIGATION_DEFAULT;
-  const navigation = findMenuByLocation(menus, navigationLocation);
+  // Hardcoded 6 navigation categories line-by-line
+  const mainCategories = [
+    { label: 'Movies', slug: 'movies' },
+    { label: 'TV', slug: 'tv' },
+    { label: 'Reviews', slug: 'reviews' },
+    { label: 'Box Office', slug: 'box-office' },
+    { label: 'Gaming', slug: 'gaming' },
+    { label: 'Tech', slug: 'tech' },
+  ];
 
   const { query, results, search, clearSearch, state } = useSearch({
     maxResults: 5,
@@ -181,9 +186,13 @@ const Nav = () => {
           <Link href="/">{title}</Link>
         </p>
         <ul className={styles.navMenu}>
-          {navigation?.map((listItem) => {
-            return <NavListItem key={listItem.id} className={styles.navSubMenu} item={listItem} />;
-          })}
+          {mainCategories.map((cat) => (
+            <li key={cat.slug}>
+              <Link href={`/categories/${cat.slug}`}>
+                {cat.label}
+              </Link>
+            </li>
+          ))}
         </ul>
         <div className={styles.navSearch}>
           {searchVisibility === SEARCH_HIDDEN && (
