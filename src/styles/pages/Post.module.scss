@@ -1,11 +1,33 @@
 @import "styles/settings/__settings";
 
+/* Main Title (H1) Styling - Compact & Clean */
+.title {
+  font-size: 2rem !important;
+  font-weight: 800;
+  line-height: 1.25;
+  color: #111827;
+  text-align: center;
+  margin-top: 0.5rem;
+  margin-bottom: 1rem;
+  max-width: 850px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @media (max-width: 768px) {
+    font-size: 1.6rem !important;
+  }
+}
+
+/* Post Metadata (Date & Categories) */
 .postMetadata {
   text-align: center;
   justify-content: center;
+  font-size: 0.875rem;
+  color: #6b7280;
+  margin-bottom: 2rem;
 }
 
-/* Sidebar Layout Settings */
+/* Main Post Layout */
 .postLayout {
   display: flex;
   gap: 2.5rem;
@@ -21,6 +43,34 @@
   min-width: 0;
 }
 
+/* Post Body Text & Headings */
+.content {
+  font-size: 1.05rem !important;
+  line-height: 1.7;
+  color: #374151;
+
+  p {
+    margin-bottom: 1.25rem;
+  }
+
+  h2 {
+    font-size: 1.5rem !important;
+    font-weight: 700;
+    margin-top: 1.75rem;
+    margin-bottom: 0.75rem;
+    color: #111827;
+  }
+
+  h3 {
+    font-size: 1.25rem !important;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+    color: #111827;
+  }
+}
+
+/* Sidebar Settings */
 .sidebar {
   width: 320px;
   flex-shrink: 0;
