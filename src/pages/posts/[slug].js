@@ -89,7 +89,6 @@ export default function Post({ post, socialImage, related }) {
         <Metadata
           className={styles.postMetadata}
           date={date}
-          author={author}
           categories={categories}
           options={metadataOptions}
           isSticky={isSticky}
