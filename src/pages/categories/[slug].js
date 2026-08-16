@@ -41,7 +41,12 @@ export default function Category({ category, posts = [] }) {
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  const { category } = (await getCategoryBySlug(params?.slug)) || {};
+  console.log("Requested Slug from URL:", params?.slug);
+
+  const response = await getCategoryBySlug(params?.slug);
+  console.log("WordPress Response:", JSON.stringify(response, null, 2));
+
+  const { category } = response || {};
 
   if (!category) {
     return {
