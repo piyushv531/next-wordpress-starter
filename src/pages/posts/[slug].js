@@ -20,18 +20,7 @@ import FeaturedImage from 'components/FeaturedImage';
 import styles from 'styles/pages/Post.module.scss';
 
 export default function Post({ post, socialImage, related }) {
-  const {
-    title,
-    metaTitle,
-    description,
-    content,
-    date,
-    author,
-    categories,
-    modified,
-    featuredImage,
-    isSticky = false,
-  } = post;
+  const { title, metaTitle, description, content, date, author, categories, modified, featuredImage, isSticky = false } = post;
 
   const { metadata: siteMetadata = {}, homepage } = useSite();
 
@@ -99,10 +88,7 @@ export default function Post({ post, socialImage, related }) {
       <Content>
         <Section>
           <Container>
-            {/* Sidebar aur Content Wrapper */}
             <div className={styles.postLayout}>
-              
-              {/* Main Article Content */}
               <article className={styles.mainArticle}>
                 <div
                   className={styles.content}
@@ -112,7 +98,6 @@ export default function Post({ post, socialImage, related }) {
                 />
               </article>
 
-              {/* Sidebar Area */}
               <aside className={styles.sidebar}>
                 <div className={styles.widget}>
                   <h3 className={styles.widgetTitle}>
@@ -122,9 +107,7 @@ export default function Post({ post, socialImage, related }) {
                     <ul className={styles.widgetList}>
                       {relatedPostsList.map((relatedPost) => (
                         <li key={relatedPost.title}>
-                          <Link href={postPathBySlug(relatedPost.slug)}>
-                            {relatedPost.title}
-                          </Link>
+                          <Link href={postPathBySlug(relatedPost.slug)}>{relatedPost.title}</Link>
                         </li>
                       ))}
                     </ul>
@@ -133,7 +116,6 @@ export default function Post({ post, socialImage, related }) {
                   )}
                 </div>
               </aside>
-
             </div>
           </Container>
         </Section>
