@@ -4,7 +4,6 @@ import { Helmet } from 'react-helmet';
 import { getPostBySlug, getRelatedPosts } from 'lib/posts';
 import { categoryPathBySlug, postPathBySlug } from 'lib/categories';
 import { formatDate } from 'lib/datetime';
-import { articleSchema } from 'lib/json-ld';
 
 import Layout from 'components/Layout';
 import Header from 'components/Header';
@@ -13,28 +12,29 @@ import Container from 'components/Container';
 
 import styles from 'styles/pages/Post.module.scss';
 
-export default function Post({ post = {}, related = {} }) {
+export default function Post({ post, related }) {
+  if (!post) {
+    return null;
+  }
+
   const {
-    title,
-    content,
-    date,
-    categories,
-    og,
+    title = '',
+    content = '',
+    date = '',
+    categories = [],
+    og = {},
   } = post;
 
-  const helmetTitle = title ? `${title}` : 'Post';
   const relatedCategory = related?.posts?.[0]?.categories?.[0];
-  const relatedPostsList = related?.posts || [];
+  const relatedPostsList = Array.isArray(related?.posts) ? related.posts : [];
 
   return (
     <Layout>
       <Helmet>
-        <title>{helmetTitle}</title>
-        <meta name="description" content={`Read ${title || ''}`} />
+        <title>{title}</title>
+        <meta name="description" content={`Read ${title}`} />
         {og?.imageUrl && <meta property="og:image" content={og.imageUrl} />}
-        {og?.imageWidth && <meta property="og:image:width" content={og.imageWidth} />}
-        {og?.imageHeight && <meta property="og:image:height" content={og.imageHeight} />}
-        <meta property="og:title" content={title || ''} />
+        <meta property="og:title" content={title} />
         <meta property="og:type" content="article" />
       </Helmet>
 
@@ -42,17 +42,20 @@ export default function Post({ post = {}, related = {} }) {
         <h1 className={styles.title}>{title}</h1>
 
         <p className={styles.postMetadata}>
-          {date && <time dateTime={date}>{formatDate(date)}</time>}
+          {date ? <time dateTime={date}>{formatDate(date)}</time> : null}
           {Array.isArray(categories) && categories.length > 0 && (
             <span>
               {' '}
               in{' '}
-              {categories.map((category, index) => (
-                <span key={category.slug || index}>
-                  <Link href={categoryPathBySlug(category.slug)}>{category.name}</Link>
-                  {index < categories.length - 1 ? ', ' : ''}
-                </span>
-              ))}
+              {categories.map((category, index) => {
+                if (!category?.slug || !category?.name) return null;
+                return (
+                  <span key={category.slug}>
+                    <Link href={categoryPathBySlug(category.slug)}>{category.name}</Link>
+                    {index < categories.length - 1 ? ', ' : ''}
+                  </span>
+                );
+              })}
             </span>
           )}
         </p>
@@ -63,14 +66,14 @@ export default function Post({ post = {}, related = {} }) {
           <div className={styles.postLayout}>
             {/* Main Article Content */}
             <article className={styles.mainArticle}>
-              {content && (
+              {content ? (
                 <div
                   className={styles.content}
                   dangerouslySetInnerHTML={{
                     __html: content,
                   }}
                 />
-              )}
+              ) : null}
             </article>
 
             {/* Sidebar with Search Bar & Related Posts */}
@@ -96,13 +99,16 @@ export default function Post({ post = {}, related = {} }) {
                 <h3 className={styles.widgetTitle}>
                   {relatedCategory?.name ? `More from ${relatedCategory.name}` : 'Related Posts'}
                 </h3>
-                {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 ? (
+                {relatedPostsList.length > 0 ? (
                   <ul className={styles.widgetList}>
-                    {relatedPostsList.map((relatedPost) => (
-                      <li key={relatedPost.slug || relatedPost.title}>
-                        <Link href={postPathBySlug(relatedPost.slug)}>{relatedPost.title}</Link>
-                      </li>
-                    ))}
+                    {relatedPostsList.map((relatedPost) => {
+                      if (!relatedPost?.slug || !relatedPost?.title) return null;
+                      return (
+                        <li key={relatedPost.slug}>
+                          <Link href={postPathBySlug(relatedPost.slug)}>{relatedPost.title}</Link>
+                        </li>
+                      );
+                    })}
                   </ul>
                 ) : (
                   <p>No related posts available.</p>
@@ -117,25 +123,30 @@ export default function Post({ post = {}, related = {} }) {
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  const { post } = await getPostBySlug(params?.slug);
+  try {
+    const { post } = await getPostBySlug(params?.slug);
 
-  if (!post) {
+    if (!post) {
+      return {
+        notFound: true,
+      };
+    }
+
+    const { categories, id } = post;
+    const relatedCategory = Array.isArray(categories) ? categories[0] : null;
+    const related = relatedCategory ? await getRelatedPosts(relatedCategory, id) : null;
+
+    return {
+      props: {
+        post: post || null,
+        related: related || null,
+      },
+    };
+  } catch (error) {
     return {
       notFound: true,
     };
   }
-
-  const { categories, id } = post;
-
-  const relatedCategory = categories?.[0];
-  const related = await getRelatedPosts(relatedCategory, id);
-
-  return {
-    props: {
-      post,
-      related: related || {},
-    },
-  };
 }
 
 export async function getStaticPaths() {
