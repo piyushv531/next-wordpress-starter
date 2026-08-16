@@ -99,7 +99,7 @@
   color: #111827;
 }
 
-/* Related Posts List & Titles Overrides (Fixed Syntax Error) */
+/* Related Posts List & Titles */
 .widgetList {
   list-style: none !important;
   padding: 0 !important;
@@ -120,7 +120,7 @@
       text-decoration: none !important;
       color: #0066cc !important;
       font-weight: 600 !important;
-      font-size: 0.9rem !important; /* Related Post Title font size reduced */
+      font-size: 0.88rem !important; /* Related Post Titles Font Size Reduced */
       line-height: 1.35 !important;
       display: block;
 
@@ -160,7 +160,7 @@
       margin-bottom: 0.5rem;
 
       a {
-        font-size: 0.9rem !important;
+        font-size: 0.88rem !important;
         line-height: 1.35 !important;
       }
     }
