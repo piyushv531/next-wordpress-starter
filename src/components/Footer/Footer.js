@@ -1,8 +1,8 @@
-import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import useSite from 'hooks/use-site';
 import { postPathBySlug } from 'lib/posts';
+import { categoryPathBySlug } from 'lib/categories';
 
 import Section from 'components/Section';
 import Container from 'components/Container';
@@ -10,7 +10,6 @@ import Container from 'components/Container';
 import styles from './Footer.module.scss';
 
 const Footer = () => {
-  const router = useRouter();
   const { metadata = {}, recentPosts = [], categories = [] } = useSite();
   const { title } = metadata;
 
@@ -21,7 +20,9 @@ const Footer = () => {
   const handleCategoryChange = (e) => {
     const selectedSlug = e.target.value;
     if (selectedSlug) {
-      router.push(`/categories/${selectedSlug}/`);
+      // Safe hard navigation to avoid React hydration/routing exceptions on category pages
+      const targetUrl = categoryPathBySlug(selectedSlug);
+      window.location.href = targetUrl;
     }
   };
 
