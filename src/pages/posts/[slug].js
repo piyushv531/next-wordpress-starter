@@ -26,7 +26,6 @@ export default function Post({ post, socialImage, related }) {
     description,
     content,
     date,
-    author,
     categories,
     featuredImage,
     isSticky = false,
@@ -114,22 +113,27 @@ export default function Post({ post, socialImage, related }) {
                 />
               </article>
 
-              {/* Sidebar with Search Bar & Related Posts */}
+              {/* Sidebar with Modern Search Bar & Related Posts */}
               <aside className={styles.sidebar}>
                 {/* Search Widget */}
                 <div className={styles.widget}>
                   <h3 className={styles.widgetTitle}>Search</h3>
                   <form action="/search" method="get" className={styles.searchForm}>
-                    <input
-                      type="search"
-                      name="q"
-                      placeholder="Search posts..."
-                      className={styles.searchInput}
-                      required
-                    />
-                    <button type="submit" className={styles.searchButton}>
-                      Search
-                    </button>
+                    <div className={styles.searchWrapper}>
+                      <input
+                        type="search"
+                        name="q"
+                        placeholder="Search posts..."
+                        className={styles.searchInput}
+                        required
+                      />
+                      <button type="submit" className={styles.searchButton} aria-label="Search">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                          <circle cx="11" cy="11" r="8"></circle>
+                          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                        </svg>
+                      </button>
+                    </div>
                   </form>
                 </div>
 
