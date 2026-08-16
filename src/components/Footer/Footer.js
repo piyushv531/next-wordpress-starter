@@ -3,7 +3,6 @@ import Link from 'next/link';
 
 import useSite from 'hooks/use-site';
 import { postPathBySlug } from 'lib/posts';
-import { categoryPathBySlug } from 'lib/categories';
 
 import Section from 'components/Section';
 import Container from 'components/Container';
@@ -22,7 +21,7 @@ const Footer = () => {
   const handleCategoryChange = (e) => {
     const selectedSlug = e.target.value;
     if (selectedSlug) {
-      router.push(categoryPathBySlug(selectedSlug));
+      router.push(`/categories/${selectedSlug}/`);
     }
   };
 
