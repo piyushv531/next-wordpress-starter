@@ -5,21 +5,35 @@ import usePageMetadata from 'hooks/use-page-metadata';
 import TemplateArchive from 'templates/archive';
 import Title from 'components/Title';
 
-export default function Category({ category, posts }) {
-  const { name, description, slug } = category;
+export default function Category({ category, posts = [] }) {
+  // Safety check agar category undefined/null mile
+  if (!category) {
+    return null;
+  }
+
+  const { name = '', description = '', slug = '' } = category;
+  const safePosts = Array.isArray(posts) ? posts : [];
 
   const { metadata } = usePageMetadata({
     metadata: {
       ...category,
-      description: description || category.og?.description || `Read ${posts.length} posts from ${name}`,
+      description: description || category?.og?.description || `Read ${safePosts.length} posts from ${name}`,
     },
   });
 
-  return <TemplateArchive title={name} Title={<Title title={name} />} posts={posts} slug={slug} metadata={metadata} />;
+  return (
+    <TemplateArchive 
+      title={name} 
+      Title={<Title title={name} />} 
+      posts={safePosts} 
+      slug={slug} 
+      metadata={metadata} 
+    />
+  );
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  const { category } = await getCategoryBySlug(params?.slug);
+  const { category } = (await getCategoryBySlug(params?.slug)) || {};
 
   if (!category) {
     return {
@@ -28,44 +42,21 @@ export async function getStaticProps({ params = {} } = {}) {
     };
   }
 
-  const { posts } = await getPostsByCategoryId({
+  const { posts } = (await getPostsByCategoryId({
     categoryId: category.databaseId,
     queryIncludes: 'archive',
-  });
+  })) || {};
 
   return {
     props: {
       category,
-      posts,
+      posts: Array.isArray(posts) ? posts : [],
     },
+    revalidate: 60, // Server response fail-safe optimization
   };
 }
 
 export async function getStaticPaths() {
-  // By default, we don't render any Category pages as
-  // we're considering them non-critical pages
-
-  // To enable pre-rendering of Category pages:
-
-  // 1. Add import to the top of the file
-  //
-  // import { getAllCategories, getCategoryBySlug } from 'lib/categories';
-
-  // 2. Uncomment the below
-  //
-  // const { categories } = await getAllCategories();
-
-  // const paths = categories.map((category) => {
-  //   const { slug } = category;
-  //   return {
-  //     params: {
-  //       slug,
-  //     },
-  //   };
-  // });
-
-  // 3. Update `paths` in the return statement below to reference the `paths` constant above
-
   return {
     paths: [],
     fallback: 'blocking',
