@@ -16,27 +16,23 @@ const nextConfig = {
     ignoreBuildErrors: true,
   },
 
-  // By default, Next.js removes the trailing slash. One reason this would be good
-  // to include is by default, the `path` property of the router for the homepage
-  // is `/` and by using that, would instantly create a redirect
+  // Production build optimizations (Production JS bundle reduce karega)
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production' ? { exclude: ['error'] } : false,
+  },
+
+  // Unused code & CSS payload kam karne ke liye Next.js built-in optimizations
+  modularizeImports: {
+    lodash: {
+      transform: 'lodash/{{member}}',
+    },
+  },
 
   trailingSlash: true,
 
-  // By enabling verbose logging, it will provide additional output details for
-  // diagnostic purposes. By default is set to false.
-  // verbose: true,
-
   env: {
-    // The image directory for open graph images will be saved at the location above
-    // with `public` prepended. By default, images will be saved at /public/images/og
-    // and available at /images/og. If changing, make sure to update the .gitignore
-
     OG_IMAGE_DIRECTORY: '/images/og',
-
-    // By default, only render this number of post pages ahead of time, otherwise
-    // the rest will be rendered on-demand
     POSTS_PRERENDER_COUNT: 5,
-
     WORDPRESS_GRAPHQL_ENDPOINT: process.env.WORDPRESS_GRAPHQL_ENDPOINT,
     WORDPRESS_MENU_LOCATION_NAVIGATION: process.env.WORDPRESS_MENU_LOCATION_NAVIGATION || 'PRIMARY',
     WORDPRESS_PLUGIN_SEO: parseEnvValue(process.env.WORDPRESS_PLUGIN_SEO, false),
@@ -50,9 +46,8 @@ module.exports = () => {
 
 /**
  * parseEnv
- * @description Helper function to check if a variable is defined and parse booelans
+ * @description Helper function to check if a variable is defined and parse booleans
  */
-
 function parseEnvValue(value, defaultValue) {
   if (typeof value === 'undefined') return defaultValue;
   if (value === true || value === 'true') return true;
