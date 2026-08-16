@@ -6,15 +6,13 @@ import TemplateArchive from 'templates/archive';
 import Title from 'components/Title';
 
 export default function Category({ category, posts = [] }) {
-  // Agar category na mile toh white screen ki jagah yeh message dikhega
+  // If category is not found, display a fallback message instead of crashing
   if (!category) {
     return (
-      <div style={{ padding: '5rem 1rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
-        <h1 style={{ fontSize: '2rem', marginBottom: '1rem' }}>Category Not Found</h1>
-        <p style={{ color: '#666' }}>WordPress se is category ka data fetch nahi ho pa raha hai. Kripya check karein ki slug sahi hai ya nahi.</p>
-        <p style={{ marginTop: '2rem' }}>
-          <a href="/" style={{ color: '#0070f3', textDecoration: 'underline' }}>Go back home</a>
-        </p>
+      <div style={{ padding: '3rem', textAlign: 'center', fontFamily: 'sans-serif' }}>
+        <h1>Category Not Found</h1>
+        <p>Sorry, we could not find this category or fetch posts from the server.</p>
+        <a href="/" style={{ color: '#0070f3', textDecoration: 'underline' }}>Back to Home</a>
       </div>
     );
   }
@@ -41,37 +39,53 @@ export default function Category({ category, posts = [] }) {
 }
 
 export async function getStaticProps({ params = {} } = {}) {
-  console.log("Requested Slug from URL:", params?.slug);
+  try {
+    const data = await getCategoryBySlug(params?.slug);
+    const category = data?.category;
 
-  const response = await getCategoryBySlug(params?.slug);
-  console.log("WordPress Response:", JSON.stringify(response, null, 2));
+    if (!category) {
+      return {
+        props: {},
+        notFound: true,
+      };
+    }
 
-  const { category } = response || {};
+    const postsData = await getPostsByCategoryId({
+      categoryId: category.databaseId,
+      queryIncludes: 'archive',
+    });
 
-  if (!category) {
+    const posts = postsData?.posts;
+
     return {
-      props: {},
-      notFound: true,
+      props: {
+        category,
+        posts: Array.isArray(posts) ? posts : [],
+      },
+      revalidate: 60,
+    };
+  } catch (error) {
+    console.error('Error fetching category data:', error);
+    return {
+      props: {
+        category: null,
+        posts: [],
+      },
+      revalidate: 10,
     };
   }
-
-  const { posts } = (await getPostsByCategoryId({
-    categoryId: category.databaseId,
-    queryIncludes: 'archive',
-  })) || {};
-
-  return {
-    props: {
-      category,
-      posts: Array.isArray(posts) ? posts : [],
-    },
-    revalidate: 60,
-  };
 }
 
 export async function getStaticPaths() {
   return {
-    paths: [],
+    paths: [
+      { params: { slug: 'movies' } },
+      { params: { slug: 'tv' } },
+      { params: { slug: 'reviews' } },
+      { params: { slug: 'box-office' } },
+      { params: { slug: 'gaming' } },
+      { params: { slug: 'tech' } },
+    ],
     fallback: 'blocking',
   };
 }
