@@ -99,9 +99,8 @@
   color: #111827;
 }
 
-/* Related Posts List & Titles Overrides */
-.widgetList,
-:global(.widget) ul {
+/* Related Posts List & Titles Overrides (Fixed Syntax Error) */
+.widgetList {
   list-style: none !important;
   padding: 0 !important;
   margin: 0 !important;
@@ -121,7 +120,7 @@
       text-decoration: none !important;
       color: #0066cc !important;
       font-weight: 600 !important;
-      font-size: 0.9rem !important; /* Related Post Title Chhota Ho Jayega */
+      font-size: 0.9rem !important; /* Related Post Title font size reduced */
       line-height: 1.35 !important;
       display: block;
 
