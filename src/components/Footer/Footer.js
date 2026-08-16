@@ -15,7 +15,7 @@ const Footer = () => {
   const latestFivePosts = Array.isArray(recentPosts) ? recentPosts.slice(0, 5) : [];
   const hasRecentPosts = latestFivePosts.length > 0;
 
-  // Categories list for the dropdown in the 4th column
+  // Categories list for the dropdown in the 3rd column
   const categories = [
     { label: 'Movies', slug: 'movies' },
     { label: 'TV', slug: 'tv' },
@@ -36,8 +36,8 @@ const Footer = () => {
     <footer className={styles.footer}>
       <Section className={styles.footerMenu}>
         <Container>
-          {/* 4 columns layout with equal width using repeat(4, 1fr) */}
-          <ul className={styles.footerMenuColumns} style={{ gridTemplateColumns: 'repeat(4, 1fr)' }}>
+          {/* 4 equal columns layout */}
+          <ul className={styles.footerMenuColumns}>
             
             {/* Column 1: Site Info */}
             <li>
@@ -68,22 +68,7 @@ const Footer = () => {
               )}
             </li>
 
-            {/* Column 3: More (RSS & Sitemap) */}
-            <li>
-              <p className={styles.footerMenuTitle}>
-                <strong>More</strong>
-              </p>
-              <ul className={styles.footerMenuItems}>
-                <li>
-                  <a href="/feed.xml">RSS</a>
-                </li>
-                <li>
-                  <a href="/sitemap.xml">Sitemap</a>
-                </li>
-              </ul>
-            </li>
-
-            {/* Column 4: Categories Dropdown */}
+            {/* Column 3: Categories Dropdown (Ab yeh 3rd column me aa gaya hai) */}
             <li>
               <p className={styles.footerMenuTitle}>
                 <strong>Categories</strong>
@@ -111,6 +96,21 @@ const Footer = () => {
                   ))}
                 </select>
               </div>
+            </li>
+
+            {/* Column 4: More (RSS & Sitemap) */}
+            <li>
+              <p className={styles.footerMenuTitle}>
+                <strong>More</strong>
+              </p>
+              <ul className={styles.footerMenuItems}>
+                <li>
+                  <a href="/feed.xml">RSS</a>
+                </li>
+                <li>
+                  <a href="/sitemap.xml">Sitemap</a>
+                </li>
+              </ul>
             </li>
 
           </ul>
