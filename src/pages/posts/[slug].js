@@ -78,8 +78,9 @@ export default function Post({ post, related }) {
 
             {/* Sidebar with Search Bar & Related Posts */}
             <aside className={styles.sidebar}>
-              {/* Search Bar Widget */}
+              {/* Search Widget */}
               <div className={styles.widget}>
+                <h3 className={styles.widgetTitle}>Search</h3>
                 <form action="/search" method="get" className={styles.searchForm}>
                   <input
                     type="search"
