@@ -50,8 +50,7 @@
 }
 
 /* Post Body Text & Headings */
-.content,
-:global(.content) {
+.content {
   font-size: 1.05rem !important;
   line-height: 1.7 !important;
   color: #374151 !important;
@@ -114,7 +113,7 @@
   color: #111827;
 }
 
-/* Modern Clean Search Form Bar Fix */
+/* Search Form Styling */
 .searchForm {
   width: 100%;
   margin: 0;
