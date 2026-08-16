@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router';
 import Link from 'next/link';
 
 import useSite from 'hooks/use-site';
@@ -10,20 +11,20 @@ import Container from 'components/Container';
 import styles from './Footer.module.scss';
 
 const Footer = () => {
-  const { metadata = {}, recentPosts = [] } = useSite();
+  const router = useRouter();
+  const { metadata = {}, recentPosts = [], categories = [] } = useSite();
   const { title } = metadata;
 
   const latestFivePosts = Array.isArray(recentPosts) ? recentPosts.slice(0, 5) : [];
   const hasRecentPosts = latestFivePosts.length > 0;
+  const hasCategories = Array.isArray(categories) && categories.length > 0;
 
-  // Hardcoded 5 categories list
-  const fixedCategories = [
-    { name: 'AI', slug: 'ai' },
-    { name: 'Celebs', slug: 'celebs' },
-    { name: 'Marvel', slug: 'marvel' },
-    { name: 'DC', slug: 'dc' },
-    { name: 'Gadgets', slug: 'gadgets' },
-  ];
+  const handleCategoryChange = (e) => {
+    const selectedSlug = e.target.value;
+    if (selectedSlug) {
+      router.push(categoryPathBySlug(selectedSlug));
+    }
+  };
 
   return (
     <footer className={styles.footer}>
@@ -59,20 +60,33 @@ const Footer = () => {
               )}
             </li>
 
-            {/* Column 3: Categories (Fixed 5 Line-by-Line Links) */}
+            {/* Column 3: Categories Dropdown */}
             <li>
               <Link href="/categories/" className={styles.footerMenuTitle}>
                 <strong>Categories</strong>
               </Link>
-              <ul className={styles.footerMenuItems}>
-                {fixedCategories.map((category) => (
-                  <li key={category.slug}>
-                    <Link href={categoryPathBySlug(category.slug)}>
-                      {category.name}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
+              {hasCategories && (
+                <div className={styles.categoryDropdownWrapper}>
+                  <select
+                    className={styles.categorySelect}
+                    onChange={handleCategoryChange}
+                    defaultValue=""
+                    aria-label="Select Category"
+                  >
+                    <option value="" disabled>
+                      Select Category
+                    </option>
+                    {categories.map((category) => {
+                      const { id, slug, name } = category;
+                      return (
+                        <option key={id || slug} value={slug}>
+                          {name}
+                        </option>
+                      );
+                    })}
+                  </select>
+                </div>
+              )}
             </li>
 
             {/* Column 4: More */}
