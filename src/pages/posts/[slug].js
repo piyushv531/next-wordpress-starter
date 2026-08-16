@@ -1,31 +1,24 @@
 import Link from 'next/link';
 import { Helmet } from 'react-helmet';
 
-import { getPostBySlug, getRelatedPosts, getCategoryBySlug } from 'lib/posts';
+import { getPostBySlug, getRelatedPosts } from 'lib/posts';
 import { categoryPathBySlug, postPathBySlug } from 'lib/categories';
 import { formatDate } from 'lib/datetime';
-import { articleSchema } from 'lib/json-ld';
 
 import Layout from 'components/Layout';
 import Header from 'components/Header';
 import Section from 'components/Section';
 import Container from 'components/Container';
-import ContentBox from 'components/ContentBox';
 
 import styles from 'styles/pages/Post.module.scss';
 
-export default function Post({ post, socialImage, related }) {
+export default function Post({ post, related }) {
   const {
     title,
-    metadata,
     content,
     date,
-    modified,
     categories,
-    isSticky = false,
   } = post;
-
-  const { title: statsTitle, image: statsImage } = metadata || {};
 
   const relatedCategory = related?.posts?.[0]?.categories?.[0];
   const relatedPostsList = related?.posts || [];
@@ -59,60 +52,58 @@ export default function Post({ post, socialImage, related }) {
         </p>
       </Header>
 
-      <ContentBox>
-        <Section>
-          <Container>
-            <div className={styles.postLayout}>
-              {/* Main Article Content */}
-              <article className={styles.mainArticle}>
-                <div
-                  className={styles.content}
-                  dangerouslySetInnerHTML={{
-                    __html: content,
-                  }}
-                />
-              </article>
+      <Section>
+        <Container>
+          <div className={styles.postLayout}>
+            {/* Main Article Content */}
+            <article className={styles.mainArticle}>
+              <div
+                className={styles.content}
+                dangerouslySetInnerHTML={{
+                  __html: content,
+                }}
+              />
+            </article>
 
-              {/* Sidebar with Search Bar & Related Posts */}
-              <aside className={styles.sidebar}>
-                {/* Search Bar Widget */}
-                <div className={styles.widget}>
-                  <form action="/search" method="get" className={styles.searchForm}>
-                    <input
-                      type="search"
-                      name="q"
-                      placeholder="Search posts..."
-                      className={styles.searchInput}
-                      required
-                    />
-                    <button type="submit" className={styles.searchButton}>
-                      Search
-                    </button>
-                  </form>
-                </div>
+            {/* Sidebar with Search Bar & Related Posts */}
+            <aside className={styles.sidebar}>
+              {/* Search Bar Widget */}
+              <div className={styles.widget}>
+                <form action="/search" method="get" className={styles.searchForm}>
+                  <input
+                    type="search"
+                    name="q"
+                    placeholder="Search posts..."
+                    className={styles.searchInput}
+                    required
+                  />
+                  <button type="submit" className={styles.searchButton}>
+                    Search
+                  </button>
+                </form>
+              </div>
 
-                {/* Related Posts Widget */}
-                <div className={styles.widget}>
-                  <h3 className={styles.widgetTitle}>
-                    {relatedCategory?.name ? `More from ${relatedCategory.name}` : 'Related Posts'}
-                  </h3>
-                  {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 ? (
-                    <ul className={styles.widgetList}>
-                      {relatedPostsList.map((relatedPost) => (
-                        <li key={relatedPost.title}>
-                          <Link href={postPathBySlug(relatedPost.slug)}>{relatedPost.title}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    <p>No related posts available.</p>
-                  )}
-                </div>
-              </aside>
-            </div>
-          </Container>
-        </Section>
-      </ContentBox>
+              {/* Related Posts Widget */}
+              <div className={styles.widget}>
+                <h3 className={styles.widgetTitle}>
+                  {relatedCategory?.name ? `More from ${relatedCategory.name}` : 'Related Posts'}
+                </h3>
+                {Array.isArray(relatedPostsList) && relatedPostsList.length > 0 ? (
+                  <ul className={styles.widgetList}>
+                    {relatedPostsList.map((relatedPost) => (
+                      <li key={relatedPost.title}>
+                        <Link href={postPathBySlug(relatedPost.slug)}>{relatedPost.title}</Link>
+                      </li>
+                    ))}
+                  </ul>
+                ) : (
+                  <p>No related posts available.</p>
+                )}
+              </div>
+            </aside>
+          </div>
+        </Container>
+      </Section>
     </Layout>
   );
 }
