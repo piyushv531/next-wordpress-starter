@@ -6,6 +6,12 @@ import { pagePathBySlug } from 'lib/pages';
 
 import config from '../../package.json';
 
+// Helper function to strip HTML tags from strings
+function stripHtml(htmlString) {
+  if (!htmlString) return '';
+  return htmlString.replace(/<\/?[^>]+(>|$)/g, "").trim();
+}
+
 export function ArticleJsonLd({ post = {}, siteTitle = '' }) {
   const { homepage = '', faviconPath = '/favicon.ico' } = config;
   const { title, slug, excerpt, date, author, categories, modified, featuredImage } = post;
@@ -29,7 +35,7 @@ export function ArticleJsonLd({ post = {}, siteTitle = '' }) {
     image: [featuredImage?.sourceUrl],
     datePublished: datePublished ? datePublished.toISOString() : '',
     dateModified: dateModified ? dateModified.toISOString() : datePublished.toISOString(),
-    description: excerpt,
+    description: stripHtml(excerpt),
     keywords: [categories.map(({ name }) => `${name}`).join(', ')],
     copyrightYear: datePublished ? datePublished.getFullYear() : '',
     author: {
@@ -84,7 +90,7 @@ export function WebpageJsonLd({ title = '', description = '', siteTitle = '', sl
     '@context': 'http://schema.org',
     '@type': 'WebPage',
     name: title,
-    description: description,
+    description: stripHtml(description),
     url: `${homepage}${path}`,
     publisher: {
       '@type': 'ProfilePage',
@@ -110,7 +116,7 @@ export function AuthorJsonLd({ author = {} }) {
     name: name,
     image: avatar?.url,
     url: `${homepage}${path}`,
-    description: description,
+    description: stripHtml(description),
   };
 
   return (
