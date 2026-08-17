@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from 'react';
 import Link from 'next/link';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch, FaBars, FaTimes } from 'react-icons/fa';
 
 import useSite from 'hooks/use-site';
 import useSearch, { SEARCH_STATE_LOADED } from 'hooks/use-search';
@@ -17,11 +17,11 @@ const Nav = () => {
   const formRef = useRef();
 
   const [searchVisibility, setSearchVisibility] = useState(SEARCH_HIDDEN);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const { metadata = {} } = useSite();
   const { title } = metadata;
 
-  // Added Home at the very beginning of the navigation menu
   const mainCategories = [
     { label: 'Home', slug: '' },
     { label: 'Movies', slug: 'movies' },
@@ -119,6 +119,7 @@ const Nav = () => {
     if (event.keyCode === 27) {
       clearSearch();
       setSearchVisibility(SEARCH_HIDDEN);
+      setIsMenuOpen(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -135,21 +136,34 @@ const Nav = () => {
   return (
     <nav className={styles.nav}>
       <Section className={styles.navSection}>
-        <p className={styles.navName}>
-          <Link href="/">{title}</Link>
-        </p>
-        <ul className={styles.navMenu}>
+        <div className={styles.navTopRow}>
+          <p className={styles.navName}>
+            <Link href="/">{title}</Link>
+          </p>
+          <div className={styles.navActionsMobile}>
+            <button 
+              className={styles.hamburgerBtn} 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {isMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+        </div>
+
+        <ul className={`${styles.navMenu} ${isMenuOpen ? styles.navMenuOpen : ''}`}>
           {mainCategories.map((cat) => (
-            <li key={cat.label}>
+            <li key={cat.label} onClick={() => setIsMenuOpen(false)}>
               <Link href={cat.slug === '' ? '/' : `/categories/${cat.slug}`}>
                 {cat.label}
               </Link>
             </li>
           ))}
         </ul>
+
         <div className={styles.navSearch}>
           {searchVisibility === SEARCH_HIDDEN && (
-            <button onClick={handleOnToggleSearch} disabled={!searchIsLoaded}>
+            <button onClick={handleOnToggleSearch} disabled={!searchIsLoaded} aria-label="Toggle Search">
               <span className="sr-only">Toggle Search</span>
               <FaSearch />
             </button>
