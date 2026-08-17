@@ -1,4 +1,4 @@
-import { getCategoryBySlug } from 'lib/categories';
+import { getAllCategories, getCategoryBySlug } from 'lib/categories';
 import { getPostsByCategoryId } from 'lib/posts';
 import usePageMetadata from 'hooks/use-page-metadata';
 
@@ -77,15 +77,24 @@ export async function getStaticProps({ params = {} } = {}) {
 }
 
 export async function getStaticPaths() {
-  return {
-    paths: [
-      { params: { slug: 'movies' } },
-      { params: { slug: 'tv' } },
-      { params: { slug: 'reviews' } },
-      { params: { slug: 'box-office' } },
-      { params: { slug: 'gaming' } },
-      { params: { slug: 'tech' } },
-    ],
-    fallback: 'blocking',
-  };
+  try {
+    const { categories } = await getAllCategories();
+
+    return {
+      paths: categories.map((category) => {
+        return {
+          params: {
+            slug: category.slug,
+          },
+        };
+      }),
+      fallback: 'blocking',
+    };
+  } catch (error) {
+    console.error('Error loading categories for static paths:', error);
+    return {
+      paths: [],
+      fallback: 'blocking',
+    };
+  }
 }
