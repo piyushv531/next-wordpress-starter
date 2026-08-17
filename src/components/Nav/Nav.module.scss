@@ -1,249 +1,210 @@
-@import "styles/settings/__settings";
+import { useEffect, useRef, useState, useCallback } from 'react';
+import Link from 'next/link';
+import { FaSearch, FaBars, FaTimes } from 'react-icons/fa';
 
-.nav {
-  width: 100%;
-  border-bottom: 1px solid $color-gray-100;
-  padding: 0 1rem;
-}
+import useSite from 'hooks/use-site';
+import useSearch, { SEARCH_STATE_LOADED } from 'hooks/use-search';
+import { postPathBySlug } from 'lib/posts';
 
-.navSection {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  height: 100%;
-  padding-top: 0;
-  padding-bottom: 0;
-  margin: 0;
+import Section from 'components/Section';
 
-  @media (min-width: 480px) {
-    justify-content: space-between;
-    flex-direction: row;
-    flex-wrap: wrap;
-  }
-}
+import styles from './Nav.module.scss';
 
-.navName {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-shrink: 0;
-  flex-grow: 1;
-  margin: 0.8em 0 0;
+const SEARCH_VISIBLE = 'visible';
+const SEARCH_HIDDEN = 'hidden';
 
-  @media (min-width: 480px) {
-    justify-content: flex-start;
-    margin-top: 0;
-  }
+const Nav = () => {
+  const formRef = useRef();
 
-  a {
-    color: $color-gray-500;
-    font-size: 1.2rem;
-    font-weight: bold;
-    text-decoration: none;
-    border-bottom: solid 2px transparent;
+  const [searchVisibility, setSearchVisibility] = useState(SEARCH_HIDDEN);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-    @media (min-width: 480px) {
-      padding: 0.5em;
-      margin-left: -0.5em;
+  const { metadata = {} } = useSite();
+  const { title } = metadata;
+
+  const mainCategories = [
+    { label: 'Home', slug: '' },
+    { label: 'Movies', slug: 'movies' },
+    { label: 'TV', slug: 'tv' },
+    { label: 'Reviews', slug: 'reviews' },
+    { label: 'Box Office', slug: 'box-office' },
+    { label: 'Gaming', slug: 'gaming' },
+    { label: 'Tech', slug: 'tech' },
+  ];
+
+  const { query, results, search, clearSearch, state } = useSearch({
+    maxResults: 5,
+  });
+
+  const searchIsLoaded = state === SEARCH_STATE_LOADED;
+
+  useEffect(() => {
+    if (searchVisibility === SEARCH_HIDDEN) {
+      removeDocumentOnClick();
+      return;
     }
 
-    &:hover {
-      color: $color-primary;
+    addDocumentOnClick();
+    addResultsRoving();
+
+    const searchInput = Array.from(formRef.current.elements).find((input) => input.type === 'search');
+
+    searchInput.focus();
+
+    return () => {
+      removeResultsRoving();
+      removeDocumentOnClick();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchVisibility]);
+
+  function addDocumentOnClick() {
+    document.body.addEventListener('click', handleOnDocumentClick, true);
+  }
+
+  function removeDocumentOnClick() {
+    document.body.removeEventListener('click', handleOnDocumentClick, true);
+  }
+
+  function handleOnDocumentClick(e) {
+    if (!e.composedPath().includes(formRef.current)) {
+      setSearchVisibility(SEARCH_HIDDEN);
+      clearSearch();
     }
   }
-}
 
-.navSearch {
-  flex-grow: 0;
-  margin-left: 1em;
-  form {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    height: 100%;
-    padding: 1em;
-
-    @media (min-width: 480px) {
-      justify-content: flex-end;
-      margin-right: -1rem;
-    }
+  function handleOnSearch({ currentTarget }) {
+    search({
+      query: currentTarget.value,
+    });
   }
 
-  input {
-    font-size: 0.845em;
+  function handleOnToggleSearch() {
+    setSearchVisibility(SEARCH_VISIBLE);
   }
 
-  button {
-    font-size: 1.2em;
-    background: none;
-    padding: 1.045em;
-    border: none;
-    outline: none;
-    cursor: pointer;
+  function addResultsRoving() {
+    document.body.addEventListener('keydown', handleResultsRoving);
+  }
 
-    &[disabled] {
-      svg {
-        fill: $color-gray-200;
-        transition: fill 0.5s;
+  function removeResultsRoving() {
+    document.body.removeEventListener('keydown', handleResultsRoving);
+  }
+
+  function handleResultsRoving(e) {
+    const focusElement = document.activeElement;
+
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      if (focusElement.nodeName === 'INPUT' && focusElement.nextSibling.children[0].nodeName !== 'P') {
+        focusElement.nextSibling.children[0].firstChild.firstChild.focus();
+      } else if (focusElement.parentElement.nextSibling) {
+        focusElement.parentElement.nextSibling.firstChild.focus();
+      } else {
+        focusElement.parentElement.parentElement.firstChild.firstChild.focus();
       }
     }
 
-    svg {
-      fill: $color-gray-400;
-      transform: translateY(2px);
-    }
-
-    &:focus {
-      svg {
-        fill: $color-primary;
-      }
-    }
-  }
-}
-
-.navSearchResults {
-  display: none;
-  position: absolute;
-  top: 100%;
-  right: 0;
-  width: 100vw;
-  background-color: white;
-  padding: 1.5em;
-  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.3);
-  border-top: solid 5px $color-primary;
-  margin-right: -1rem;
-  z-index: 999;
-
-  @media (min-width: 480px) {
-    width: 30em;
-    margin-right: 0;
-  }
-
-  [data-search-is-active="true"] & {
-    display: block;
-  }
-
-  p {
-    line-height: 1.15;
-    margin: 0;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-    margin: -0.5em 0;
-  }
-
-  a {
-    display: block;
-    color: $color-gray-800;
-    text-decoration: none;
-    padding: 0.5em;
-    margin: 0 -0.5em;
-    &:focus {
-      outline: 2px solid $color-blue-500;
-    }
-
-    @media (hover: hover) {
-      &:hover {
-        color: $color-primary;
-      }
-    }
-  }
-}
-
-.navMenu {
-  display: flex;
-  align-items: center;
-  flex-grow: 0;
-  list-style: none;
-  padding: 0 0.5rem;
-  margin: 0;
-  overflow-x: auto;
-  white-space: nowrap;
-  -webkit-overflow-scrolling: touch;
-  scrollbar-width: none;
-  
-  &::-webkit-scrollbar {
-    display: none;
-  }
-
-  @media (min-width: 768px) {
-    overflow-x: visible;
-    flex-wrap: wrap;
-    justify-content: flex-end;
-  }
-
-  li {
-    position: relative;
-    z-index: 1;
-    margin: 0 0.25em;
-    flex-shrink: 0;
-
-    &:first-child {
-      margin-left: 0;
-    }
-
-    &:last-child {
-      margin-right: 0;
-    }
-
-    &:hover {
-      & > a {
-        color: $color-primary;
-      }
-
-      > .navSubMenu {
-        display: block;
-      }
-    }
-
-    & > .navSubMenu {
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-      padding: 0.5em 0.8em;
-    }
-
-    .navSubMenu {
-      ul {
-        top: 0;
-        left: 100%;
+    if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      if (focusElement.nodeName === 'A' && focusElement.parentElement.previousSibling) {
+        focusElement.parentElement.previousSibling.firstChild.focus();
+      } else {
+        focusElement.parentElement.parentElement.lastChild.firstChild.focus();
       }
     }
   }
 
-  a {
-    display: block;
-    text-decoration: none;
-    color: $color-gray-600;
-    font-size: 1.1em;
-    padding: 0.5em;
-
-    @media (hover: hover) {
-      &:hover {
-        color: $color-primary;
-      }
+  const escFunction = useCallback((event) => {
+    if (event.keyCode === 27) {
+      clearSearch();
+      setSearchVisibility(SEARCH_HIDDEN);
+      setIsMenuOpen(false);
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  .navSubMenu {
-    display: none;
-    position: absolute;
-    white-space: nowrap;
-    list-style: none;
-    background-color: #fff;
-    padding: 0;
+  useEffect(() => {
+    document.addEventListener('keydown', escFunction, false);
 
-    li {
-      background-color: white;
-      margin: 0;
+    return () => {
+      document.removeEventListener('keydown', escFunction, false);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      a {
-        font-size: 1rem;
-        padding: 0.3em;
-      }
-    }
-  }
-}
+  return (
+    <nav className={styles.nav}>
+      <Section className={styles.navSection}>
+        <div className={styles.navTopRow}>
+          <p className={styles.navName}>
+            <Link href="/">{title}</Link>
+          </p>
+          <div className={styles.navActionsMobile}>
+            <button 
+              className={styles.hamburgerBtn} 
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+              aria-label="Toggle Menu"
+            >
+              {isMenuOpen ? <FaTimes /> : <FaBars />}
+            </button>
+          </div>
+        </div>
+
+        <ul className={`${styles.navMenu} ${isMenuOpen ? styles.navMenuOpen : ''}`}>
+          {mainCategories.map((cat) => (
+            <li key={cat.label} onClick={() => setIsMenuOpen(false)}>
+              <Link href={cat.slug === '' ? '/' : `/categories/${cat.slug}`}>
+                {cat.label}
+              </Link>
+            </li>
+          ))}
+        </ul>
+
+        <div className={styles.navSearch}>
+          {searchVisibility === SEARCH_HIDDEN && (
+            <button onClick={handleOnToggleSearch} disabled={!searchIsLoaded} aria-label="Toggle Search">
+              <span className="sr-only">Toggle Search</span>
+              <FaSearch />
+            </button>
+          )}
+          {searchVisibility === SEARCH_VISIBLE && (
+            <form ref={formRef} action="/search" data-search-is-active={!!query}>
+              <input
+                type="search"
+                name="q"
+                value={query || ''}
+                onChange={handleOnSearch}
+                autoComplete="off"
+                placeholder="Search..."
+                required
+              />
+              <div className={styles.navSearchResults}>
+                {results.length > 0 && (
+                  <ul>
+                    {results.map(({ slug, title }, index) => {
+                      return (
+                        <li key={slug}>
+                          <Link tabIndex={index} href={postPathBySlug(slug)}>
+                            {title}
+                          </Link>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                )}
+                {results.length === 0 && (
+                  <p>
+                    Sorry, not finding anything for <strong>{query}</strong>
+                  </p>
+                )}
+              </div>
+            </form>
+          )}
+        </div>
+      </Section>
+    </nav>
+  );
+};
+
+export default Nav;
